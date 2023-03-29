@@ -1,3 +1,6 @@
 flask
 sqlite3
 MySQLdb
+pytest
+flake8
+pylint
