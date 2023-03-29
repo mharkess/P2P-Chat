@@ -2,4 +2,3 @@ flask
 pytest
 flake8
 pylint
-MySQLdb

@@ -4,7 +4,6 @@ import cProfile
 import pstats
 import logging
 import sqlite3
-import MySQLdb
 from decouple import config
 
 # Setup logging for feed ingester module
