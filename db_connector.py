@@ -50,7 +50,7 @@ def connect_to_db(isLocal):
 
 def query_db(query):
     """Executes query on database that are sent by the other API endpoints"""
-    db_connection, db_cursor = connect_to_db()
+    db_connection, db_cursor = connect_to_db(True)
     if db_cursor == 1:
         logging.error("ERROR 400: Cannot connect to database")
     else:
