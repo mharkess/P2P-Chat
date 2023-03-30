@@ -25,6 +25,16 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
+def generate_local_db():
+    """Generates SQLite3 DB for local use"""
+    database_ip = config('local_chat_db', default='')
+    try:
+        db_connection = sqlite3.connect(database_ip)
+    except sqlite3.Error:
+        logging.error("Unable to generate a local db")
+        return 1
+            
+
 def connect_to_db(isLocal):
     """Establishes conenction to database"""
     if (isLocal):
