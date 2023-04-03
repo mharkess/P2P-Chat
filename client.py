@@ -4,6 +4,7 @@ import message_transmit as mt
 import user_discovery as ud
 
 def first_time_setup():
+    """Generates local db during initial setup"""
     dbc.generate_local_db()
     return 0
 

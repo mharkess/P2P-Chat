@@ -33,11 +33,10 @@ def generate_local_db():
     except sqlite3.Error:
         logging.error("Unable to generate a local db")
         return 1
-            
 
 def connect_to_db(isLocal):
     """Establishes conenction to a database"""
-    if (isLocal):
+    if isLocal:
         database_ip = config('local_chat_db', default='')
         try:
             db_connection = sqlite3.connect(database_ip)
@@ -71,7 +70,7 @@ def query_db(query, islocal):
     if db_cursor == 1:
         logging.error("ERROR 400: Cannot connect to database")
     else:
-        if (islocal):
+        if islocal:
             try:
                 db_cursor.execute(query)
                 db_connection.commit()
