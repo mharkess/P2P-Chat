@@ -36,7 +36,7 @@ def generate_local_db():
             
 
 def connect_to_db(isLocal):
-    """Establishes conenction to database"""
+    """Establishes conenction to a database"""
     if (isLocal):
         database_ip = config('local_chat_db', default='')
         try:
