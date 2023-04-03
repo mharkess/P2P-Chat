@@ -4,6 +4,7 @@ import cProfile
 import pstats
 import logging
 import sqlite3
+import mysql.connector
 from decouple import config
 
 # Setup logging for feed ingester module
@@ -24,8 +25,18 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
+def generate_local_db():
+    """Generates SQLite3 DB for local use"""
+    database_ip = config('local_chat_db', default='')
+    try:
+        db_connection = sqlite3.connect(database_ip)
+    except sqlite3.Error:
+        logging.error("Unable to generate a local db")
+        return 1
+            
+
 def connect_to_db(isLocal):
-    """Establishes conenction to database"""
+    """Establishes conenction to a database"""
     if (isLocal):
         database_ip = config('local_chat_db', default='')
         try:
@@ -38,8 +49,14 @@ def connect_to_db(isLocal):
             return 1, 1
     else:
         database_ip = config('user_discovery_db', default='')
+        database_user = config('user_discovery_db_user', default='')
+        database_pass = config('user_discovery_db_pass', default='')
         try:
-            db_connection = sqlite3.connect(database_ip)
+            db_connection = mysql.connector.connect(
+                host = database_ip,
+                user = database_user,
+                password = database_pass
+            )
             db_cursor = db_connection.cursor()
             logging.info("Successful Connection")
             return db_connection, db_cursor
@@ -48,27 +65,33 @@ def connect_to_db(isLocal):
             return 1, 1
 
 
-def query_db(query):
+def query_db(query, islocal):
     """Executes query on database that are sent by the other API endpoints"""
     db_connection, db_cursor = connect_to_db(True)
     if db_cursor == 1:
         logging.error("ERROR 400: Cannot connect to database")
     else:
-        try:
+        if (islocal):
+            try:
+                db_cursor.execute(query)
+                db_connection.commit()
+                logging.info("Successful Query")
+                db_connection.close()
+            except sqlite3.Error:
+                logging.error("ERROR 141: Invalid Query")
+                db_connection.close()
+        else:
             db_cursor.execute(query)
-            db_connection.commit()
-            logging.info("Successful Query")
-            db_connection.close()
-        except sqlite3.Error:
-            logging.error("ERROR 141: Invalid Query")
-            db_connection.close()
+            query_result = db_cursor.fetchall()
+            logging.info("Successful Discovery Query")
+            return query_result
 
 
 def db_connector_profiler():
     """Runs a profile on db_connector and prints results to the console"""
     profiler = cProfile.Profile()
     profiler.enable()
-    query_db("TEST query")
+    query_db("TEST query",True)
     print('File Upload Successful')
     profiler.disable()
     stats = pstats.Stats(profiler).sort_stats('ncalls')
