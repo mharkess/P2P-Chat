@@ -13,6 +13,7 @@ def main():
     """Main function to be ran on client-side"""
     first_time_setup()
     ud.update_discovery()
+    user_lock = False
     while True:
         if not user_lock:
             user = input('\nEnter the user you want to chat with: ')
@@ -23,6 +24,7 @@ def main():
             break
         if message == 'SChat':  # Will switch user to chat to
             user_lock = False
+            s_connection.close()
         else:
             s_connection.send(message.encode('ascii'))
             msg_recv = s_connection.recv(1024)
