@@ -13,6 +13,7 @@ def start_message_server():
     """Creates a socket server to recieve messages from users"""
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(("localhost", 3452))
+    server.listen(10)
     return server
 
 
