@@ -66,11 +66,11 @@ def connect_to_db(isLocal):
 
 def query_db(query, islocal):
     """Executes query on database that are sent by the other API endpoints"""
-    db_connection, db_cursor = connect_to_db(True)
-    if db_cursor == 1:
-        logging.error("ERROR 400: Cannot connect to database")
-    else:
-        if islocal:
+    if islocal:
+        db_connection, db_cursor = connect_to_db(True)
+        if db_cursor == 1:
+            logging.error("ERROR 400: Cannot connect to database")
+        else:
             try:
                 db_cursor.execute(query)
                 db_connection.commit()
@@ -79,9 +79,16 @@ def query_db(query, islocal):
             except sqlite3.Error:
                 logging.error("ERROR 141: Invalid Query")
                 db_connection.close()
+    else:
+        db_connection, db_cursor = connect_to_db(False)
+        if db_cursor == 1:
+            logging.error("ERROR 400: Cannot connect to database")
         else:
             db_cursor.execute(query)
+            db_connection.commit()
             query_result = db_cursor.fetchall()
+            db_cursor.close()
+            db_connection.close()
             logging.info("Successful Discovery Query")
             return query_result
 
@@ -91,7 +98,7 @@ def db_connector_profiler():
     profiler = cProfile.Profile()
     profiler.enable()
     query_db("TEST query",True)
-    print('File Upload Successful')
+    print('Query Successful')
     profiler.disable()
     stats = pstats.Stats(profiler).sort_stats('ncalls')
     stats.print_stats()
