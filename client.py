@@ -29,7 +29,7 @@ def client_send():
                     user_lock = True
                     break
                 print("\nThis user is currently offline.")
-        message = input('\n >>User: ')
+        message = input('\n >> You: ')
         if message == 'QChat':  # Will quit the program
             print("Client stopped")
             sys.exit()
