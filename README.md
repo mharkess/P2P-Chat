@@ -1,6 +1,6 @@
 # P2P-Chat
 
-For this application, I will use a sqlite3 db to store chats of a user locally. I will use MySQL to store necessary user information needed to discover new users on the application (e.g name).
+For this application, I will use a sqlite3 db to store chats of a user locally. I will use MySQL to store necessary user information needed to discover new users on the application (e.g name). The goal of this project is to create a chat program that does not rely on a centralized server. I plan to have the chats work on a local network (a person will be able to chat with another user on the same internal network).
 
 ## Discovery Module
 
@@ -9,3 +9,4 @@ For this module, I have decided to use a MySQL database hosted on a server to fa
 ## Message Transmission
 
 ## Client
+All of the interaction between users in the program is done via the terminal. 

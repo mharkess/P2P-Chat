@@ -25,7 +25,7 @@ def client_send():
             while True:
                 user = input('\nEnter the user you want to chat with: ')
                 s_connection = mt.message_connection(user)
-                if s_connection != 0:
+                if s_connection != 1:
                     user_lock = True
                     break
                 print("\nThis user is currently offline.")
