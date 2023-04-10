@@ -1,1 +1,0 @@
-"""Module that dictates the UI of the app for the client"""

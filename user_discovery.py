@@ -1,17 +1,24 @@
 """Module to find new users to interact with"""
 import db_connector as dbc
+import message_transmit as mt
 
-def update_discovery():
+def update_discovery(username):
     """Updates ip address of client in Discovery DB"""
-    result = dbc.query_db("UPDATE discovery SET ipv4 = currentip WHERE user = test", False)
+    local_ip = mt.get_localIP()
+    query = "UPDATE discovery.users SET ipaddress = '{}' WHERE username = '{}'".format(local_ip, username)
+    result = dbc.query_db(query, False)
     return 0
 
-def find_user():
+def find_user(username):
     """Finds a user in the discovery DB"""
-    result = dbc.query_db("SELECT discovery WHERE user = test2", False)
+    query = "Select discovery.users WHERE username = {}".format(username)
+    result = dbc.query_db(query, False)
     return result
 
-def add_new_user():
+def add_new_user(username):
     """Adds current user to discovery DB"""
-    result = dbc.query_db("INSERT username, ipv4, port INTO discovery", False)
-    return result
+    local_ip = mt.get_localIP()
+    port = 3452
+    query = "INSERT INTO discovery.users (username, ipaddress, port) VALUES ('{}','{}','{}')".format(username, local_ip,port)
+    dbc.query_db(query, False)
+    return 0
