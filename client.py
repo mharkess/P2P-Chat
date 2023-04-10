@@ -6,6 +6,8 @@ import db_connector as dbc
 import message_transmit as mt
 import user_discovery as ud
 
+current_user = ''
+
 def first_time_setup():
     """Generates local db during initial setup"""
     dbc.generate_local_db()
@@ -28,7 +30,8 @@ def client_send():
                 if s_connection != 1:
                     user_lock = True
                     break
-                print("\nThis user is currently offline.")
+                print("\nNote: This user is currently offline.")
+        current_user = user
         message = input('\n >> You: ')
         if message == 'QChat':  # Will quit the program
             print("Client stopped")
@@ -50,6 +53,8 @@ def client_recieve():
         message = msg_recv[0].decode()
         user_send = message.split("%")
         query = "INSERT INTO local_storage.texthistory (username, contents) VALUES ('{}','{}')".format(user_send[0], user_send[1])
+        if user_send[0] == current_user:
+            print(" >> %s: %s",user_send[0], user_send[1])
         dbc.query_db(query,True)
         #print("\n"+ "sender: " + msg[0].decode())
         
