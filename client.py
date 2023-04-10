@@ -37,6 +37,7 @@ def client_send():
             user_lock = False
             s_connection.close()
         else:
+            message = username + "%" + message
             s_connection.send(message.encode('ascii'))
             #print('\n >> %s: %s', user, str(msg_recv.decode('ascii')))
 
@@ -46,6 +47,10 @@ def client_recieve():
     while True:
         client_socket, addr = server_socket.accept()
         msg_recv = server_socket.recv(1024)
+        message = msg_recv[0].decode()
+        user_send = message.split("%")
+        query = "INSERT INTO local_storage.texthistory (username, contents) VALUES ('{}','{}')".format(user_send[0], user_send[1])
+        dbc.query_db(query,True)
         #print("\n"+ "sender: " + msg[0].decode())
         
 # Using threading to send/recieve simultaneously
@@ -56,7 +61,7 @@ receive.daemon = True
 while True:
     first_time = input('\n Are you using this program for the first time? (y/n): ')
     if first_time == 'y':
-        user = first_time_setup()
+        username = first_time_setup()
         break
     else:
         username = input('\n Enter your username: ')
