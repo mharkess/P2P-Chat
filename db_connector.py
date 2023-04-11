@@ -62,17 +62,34 @@ def connect_to_db(isLocal):
         except sqlite3.Error:
             logging.error("ERROR 140: Cannot connect to database")
             return 1, 1
+        
+def sanatize_params(params,islocal):
+    """Sanatizes parameters before running SQL query"""
+    if islocal:
+        illegal_characters = ('"', '!', '@', '#', '$', '%', '^', '*', '+', '=', '-', '\'','|' )
+    else:
+        illegal_characters = ('"', '!', '@', '#', '$', '%', '^', '*', '+', '=', '-', '\'','|', '.', '&', '?', '/' )
+    for current_param in params:
+        if any(i in current_param for i in illegal_characters):
+            return 1
+    return 0
 
 
-def query_db(query, islocal):
+def query_db(query, islocal, **kwargs):
     """Executes query on database that are sent by the other API endpoints"""
+    query_params = kwargs.get('query_params', None)
     if islocal:
         db_connection, db_cursor = connect_to_db(True)
         if db_cursor == 1:
             logging.error("ERROR 400: Cannot connect to database")
         else:
             try:
-                db_cursor.execute(query)
+                if query_params is not None:
+                    if sanatize_params(query_params, islocal) > 0:
+                        return 1
+                    db_cursor.execute(query, query_params)
+                else:
+                    db_cursor.execute(query)
                 db_connection.commit()
                 logging.info("Successful Query")
                 db_connection.close()
