@@ -30,8 +30,10 @@ def client_send():
                 if s_connection != 1:
                     user_lock = True
                     break
-                print("\nNote: This user is currently offline.")
-        current_user = user
+                else:
+                    print("Connection Failed")
+                    return
+                print("\nThis user is currently offline.")
         message = input('\n >> You: ')
         if message == 'QChat':  # Will quit the program
             print("Client stopped")
@@ -52,9 +54,7 @@ def client_recieve():
         msg_recv = server_socket.recv(1024)
         message = msg_recv[0].decode()
         user_send = message.split("%")
-        query = "INSERT INTO local_storage.texthistory (username, contents) VALUES ('{}','{}')".format(user_send[0], user_send[1])
-        if user_send[0] == current_user:
-            print(" >> %s: %s",user_send[0], user_send[1])
+        query = "INSERT INTO local_storage.texthistory (username, contents) VALUES ('%s','%s')".format(user_send[0], user_send[1])
         dbc.query_db(query,True)
         #print("\n"+ "sender: " + msg[0].decode())
         
@@ -77,4 +77,3 @@ receive.start()
 send.join()
 print("Program terminated")
 sys.exit()
-
